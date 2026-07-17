@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 
 <head>
     
@@ -17,7 +17,36 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Puja Form</title>
+    <meta name="description" content="Book trusted puja services in Ujjain with Pandit Ram Lakhan Sharma for Kalsarp Dosh Puja, Mangal Dosh Puja, Pitra Dosh Puja, Mahamrityunjay Jaap, and other Vedic rituals.">
+    <link rel="canonical" href="https://ujjainpanditmangalpuja.com/Form.html">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#d32f2f">
+    <title>Book Puja in Ujjain | Pandit Ram Lakhan Sharma</title>
+    <link rel="stylesheet" href="./site-enhancements.css">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18195829513"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'AW-18195829513');
+    </script>
+    <script>
+    function gtag_report_conversion(url) {
+      var callback = function () {
+        if (typeof(url) != 'undefined') {
+          window.location = url;
+        }
+      };
+      gtag('event', 'conversion', {
+          'send_to': 'AW-18195829513/ja8cCXTRmdEcEImmueRD',
+          'value': 1.0,
+          'currency': 'INR',
+          'event_callback': callback
+      });
+      return false;
+    }
+    </script>
+    <script defer src="./site-enhancements.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -44,7 +73,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <!-- Right Side: Form -->
     <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-8">
-        <form  id="pujaForm" class="space-y-6"   onsubmit="sendEmail(event)">
+        <form id="pujaForm" class="space-y-6" action="process_form.php" method="POST">
             <!-- Name -->
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
@@ -95,38 +124,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </button>
         </form>
     </div>
-
-    <!-- Script for Validation -->
-    <script>
-    const menuBtn = document.getElementById('menu-btn');
-    const menu = document.getElementById('menu');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    menuBtn.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
-    });
-
-
-
-
-    function sendEmail(event) {
-    event.preventDefault(); // Prevent default form submission behavior
-
-    const form = document.getElementById("pujaForm");
-
-    const name = encodeURIComponent(form.name.value);
-    const mobile = encodeURIComponent(form.mobile.value);
-    const email = encodeURIComponent(form.email.value);
-    const puja = encodeURIComponent(form.puja.value);
-
-    // Construct the mailto link
-    const mailtoLink = `mailto: ramlakhansharma8319@gmail.com?subject=Puja Booking&body=Name: ${name}%0AMobile: ${mobile}%0AEmail: ${email}%0APuja: ${puja}`;
-
-    // Open the user's email client
-    window.location.href = mailtoLink;
-  }
-
-    </script>
 
 </body>
 

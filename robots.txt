@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ujjainpanditmangalpuja.com/sitemap.xml
