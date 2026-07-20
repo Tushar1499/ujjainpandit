@@ -15,7 +15,7 @@ $fromName = 'Ujjain Pandit Booking';
 $smtpHost = 'smtp.hostinger.com';
 $smtpPort = 587;
 $smtpUser = getenv('UJJAIN_SMTP_USERNAME') ?: $fromEmail;
-$smtpPassword = getenv('UJJAIN_SMTP_PASSWORD') ?: 'Google@1462834#';
+$smtpPassword = getenv('UJJAIN_SMTP_PASSWORD') ?: '';
 
 $pujaNames = [
     'kalsarp' => 'Kalsarp Dosh Puja',
@@ -215,40 +215,43 @@ if ($pujaKey === '') {
 
 $pujaName = $pujaNames[$pujaKey] ?? $pujaKey;
 
-try {
-    send_with_phpmailer(
-        $ownerEmail,
-        $fromEmail,
-        $fromName,
-        $smtpHost,
-        $smtpPort,
-        $smtpUser,
-        $smtpPassword,
-        $name,
-        $mobile,
-        $email,
-        $pujaName,
-        $sourcePage,
-        $siteUrl
-    );
-    respond(true, 'Thank you. Your enquiry has been sent successfully.');
-} catch (Exception $exception) {
-    error_log('PHPMailer error: ' . $exception->getMessage());
-    $fallbackSent = send_with_mail(
-        $ownerEmail,
-        $fromEmail,
-        $fromName,
-        $name,
-        $mobile,
-        $email,
-        $pujaName,
-        $sourcePage,
-        $siteUrl
-    );
-
-    if ($fallbackSent) {
+if ($smtpPassword !== '') {
+    try {
+        send_with_phpmailer(
+            $ownerEmail,
+            $fromEmail,
+            $fromName,
+            $smtpHost,
+            $smtpPort,
+            $smtpUser,
+            $smtpPassword,
+            $name,
+            $mobile,
+            $email,
+            $pujaName,
+            $sourcePage,
+            $siteUrl
+        );
         respond(true, 'Thank you. Your enquiry has been sent successfully.');
+    } catch (Exception $exception) {
+        error_log('PHPMailer error: ' . $exception->getMessage());
     }
-
-    respond(false, 'The form could not be sent right now. Please call +91-6263635078.', 500);
 }
+
+$fallbackSent = send_with_mail(
+    $ownerEmail,
+    $fromEmail,
+    $fromName,
+    $name,
+    $mobile,
+    $email,
+    $pujaName,
+    $sourcePage,
+    $siteUrl
+);
+
+if ($fallbackSent) {
+    respond(true, 'Thank you. Your enquiry has been sent successfully.');
+}
+
+respond(false, 'The form could not be sent right now. Please call +91-6263635078.', 500);

@@ -39,12 +39,12 @@
     bar.className = "site-top-callbar";
     bar.innerHTML =
       '<div class="site-top-callbar__content">' +
-      '<p class="site-top-callbar__eyebrow">Direct Assistance</p>' +
-      '<p class="site-top-callbar__title">Pandit Ji se baat karke turant puja booking karein</p>' +
+      '<p class="site-top-callbar__eyebrow">सीधा मार्गदर्शन</p>' +
+      '<p class="site-top-callbar__title">पूजा की जानकारी के लिए पंडित जी से बात करें</p>' +
       "</div>" +
       '<a class="site-top-callbar__button" href="' +
       SITE.telHref +
-      '">Call Now</a>';
+      '">कॉल करें</a>';
 
     const button = bar.querySelector("a");
     if (button) {
@@ -58,11 +58,21 @@
 
   function normalizeWhatsAppButtons() {
     const waLinks = Array.from(document.querySelectorAll('a[href*="wa.me"]'));
-    let primaryLink = waLinks[0] || null;
+    const isHomepage = document.body.classList.contains("home-page");
+    let primaryLink = document.querySelector(".site-whatsapp-fab");
 
-    waLinks.slice(1).forEach(function (duplicate) {
-      duplicate.remove();
-    });
+    if (!isHomepage) {
+      const floatingCandidates = waLinks.filter(function (link) {
+        const classes = link.className || "";
+        return classes.includes("fixed") || classes.includes("site-whatsapp-fab");
+      });
+      primaryLink = primaryLink || floatingCandidates[0] || null;
+      floatingCandidates.forEach(function (duplicate) {
+        if (duplicate !== primaryLink) {
+          duplicate.remove();
+        }
+      });
+    }
 
     if (!primaryLink) {
       primaryLink = document.createElement("a");
@@ -74,10 +84,31 @@
     primaryLink.rel = "noopener noreferrer";
     primaryLink.className = "site-whatsapp-fab";
     primaryLink.setAttribute("aria-label", "Chat on WhatsApp");
+    primaryLink.innerHTML =
+      '<svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">' +
+      '<path fill="currentColor" d="M19.11 17.19c-.26-.13-1.53-.75-1.77-.84-.24-.09-.41-.13-.59.13-.17.26-.67.84-.82 1.01-.15.17-.3.2-.56.07-.26-.13-1.09-.4-2.08-1.29-.77-.69-1.29-1.53-1.44-1.79-.15-.26-.02-.4.11-.53.12-.12.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.32-.02-.45-.07-.13-.59-1.42-.8-1.94-.21-.51-.43-.44-.59-.45h-.5c-.17 0-.45.07-.69.32-.24.26-.91.89-.91 2.16s.93 2.51 1.06 2.68c.13.17 1.83 2.79 4.43 3.91.62.27 1.1.43 1.48.55.62.2 1.18.17 1.63.1.5-.07 1.53-.63 1.75-1.23.22-.6.22-1.12.15-1.23-.06-.11-.23-.17-.49-.3ZM16.03 3a12.8 12.8 0 0 0-10.9 19.51L3.31 29l6.64-1.74A12.8 12.8 0 1 0 16.03 3Zm0 23.45a10.6 10.6 0 0 1-5.41-1.48l-.39-.23-3.94 1.03 1.05-3.84-.25-.4A10.65 10.65 0 1 1 16.03 26.45Z" />' +
+      "</svg>";
+  }
 
-    if (!primaryLink.querySelector("img")) {
-      primaryLink.innerHTML = '<span class="site-whatsapp-fab__text">WA</span>';
+  function createFloatingCallButton() {
+    if (!document.body || document.querySelector(".site-call-fab")) {
+      return;
     }
+
+    const callButton = document.createElement("a");
+    callButton.className = "site-call-fab";
+    callButton.href = SITE.telHref;
+    callButton.setAttribute("aria-label", "Call Pandit Ji on " + SITE.phoneDisplay);
+    callButton.setAttribute("title", "Call " + SITE.phoneDisplay);
+    callButton.setAttribute("onclick", "return gtag_report_conversion('" + SITE.telHref + "');");
+    const callLabel = document.documentElement.lang === "hi" ? "कॉल करें" : "Call";
+    callButton.innerHTML =
+      '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<path d="M6.62 10.79a15.46 15.46 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2Z" />' +
+      "</svg>" +
+      '<span class="site-fab-label">' + callLabel + "</span>";
+
+    document.body.appendChild(callButton);
   }
 
   function replaceOmLogos() {
@@ -87,6 +118,32 @@
       img.loading = "eager";
       img.decoding = "async";
     });
+  }
+
+  function addBrandNames() {
+    if (document.body.classList.contains("home-page")) {
+      return;
+    }
+
+    const nav = document.querySelector("body > nav");
+    if (!nav) {
+      return;
+    }
+
+    const logoImage = nav.querySelector('img[alt="Om Symbol"]');
+    const logoLink = logoImage ? logoImage.closest("a") : null;
+    if (!logoLink || logoLink.querySelector(".site-injected-brand")) {
+      return;
+    }
+
+    const copy = document.createElement("span");
+    copy.className = "site-injected-brand";
+    const isEnglish = document.documentElement.lang === "en";
+    copy.innerHTML = isEnglish
+      ? "<strong>Pandit Ram Lakhan Sharma</strong><small>Vedic rituals • Ujjain</small>"
+      : "<strong>पंडित राम लखन शर्मा</strong><small>वैदिक कर्मकांड विशेषज्ञ • उज्जैन</small>";
+    logoLink.classList.add("site-brand-link");
+    logoLink.appendChild(copy);
   }
 
   function wireCallLinks() {
@@ -106,16 +163,98 @@
   }
 
   function setupMenuToggle() {
-    const menuBtn = document.getElementById("menu-btn");
+    let menuBtn = document.getElementById("menu-btn");
     const mobileMenu = document.getElementById("mobile-menu");
 
-    if (!menuBtn || !mobileMenu || menuBtn.dataset.siteBound === "true") {
+    if (!menuBtn || !mobileMenu) {
       return;
     }
 
+    // Several legacy pages bind their own toggle. Replacing the node prevents
+    // two click handlers from cancelling each other out.
+    const cleanButton = menuBtn.cloneNode(true);
+    menuBtn.replaceWith(cleanButton);
+    menuBtn = cleanButton;
     menuBtn.dataset.siteBound = "true";
+    menuBtn.setAttribute("aria-controls", "mobile-menu");
+    menuBtn.setAttribute("aria-expanded", "false");
     menuBtn.addEventListener("click", function () {
       mobileMenu.classList.toggle("hidden");
+      const isOpen = !mobileMenu.classList.contains("hidden");
+      menuBtn.setAttribute("aria-expanded", String(isOpen));
+      menuBtn.setAttribute("aria-label", isOpen ? "मेन्यू बंद करें" : "मेन्यू खोलें");
+    });
+
+    mobileMenu.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", function () {
+        mobileMenu.classList.add("hidden");
+        menuBtn.setAttribute("aria-expanded", "false");
+      });
+    });
+  }
+
+  function setupHomepageMotion() {
+    const reveals = Array.from(document.querySelectorAll(".reveal"));
+    if (!reveals.length) {
+      return;
+    }
+
+    if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      reveals.forEach(function (item) {
+        item.classList.add("is-visible");
+      });
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
+    );
+
+    reveals.forEach(function (item) {
+      observer.observe(item);
+    });
+  }
+
+  function setupHeaderState() {
+    const header = document.querySelector("[data-site-header]");
+    if (!header) {
+      return;
+    }
+
+    const update = function () {
+      header.classList.toggle("is-scrolled", window.scrollY > 16);
+    };
+
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+  }
+
+  function setupFaq() {
+    document.querySelectorAll(".faq-list details").forEach(function (details) {
+      details.addEventListener("toggle", function () {
+        if (!details.open) {
+          return;
+        }
+        document.querySelectorAll(".faq-list details").forEach(function (other) {
+          if (other !== details) {
+            other.open = false;
+          }
+        });
+      });
+    });
+  }
+
+  function setCurrentYear() {
+    document.querySelectorAll("[data-current-year]").forEach(function (node) {
+      node.textContent = String(new Date().getFullYear());
     });
   }
 
@@ -166,26 +305,28 @@
     const puja = pujaField.value.trim();
     const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+    const isHindi = document.documentElement.lang === "hi";
+
     if (name.length < 2) {
-      showFormMessage(form, "error", "Please enter your full name.");
+      showFormMessage(form, "error", isHindi ? "कृपया अपना पूरा नाम लिखें।" : "Please enter your full name.");
       nameField.focus();
       return false;
     }
 
     if (mobile.length !== 10) {
-      showFormMessage(form, "error", "Please enter a valid 10-digit mobile number.");
+      showFormMessage(form, "error", isHindi ? "कृपया सही 10 अंकों का मोबाइल नंबर लिखें।" : "Please enter a valid 10-digit mobile number.");
       mobileField.focus();
       return false;
     }
 
     if (!emailIsValid) {
-      showFormMessage(form, "error", "Please enter a valid email address.");
+      showFormMessage(form, "error", isHindi ? "कृपया सही ईमेल पता लिखें।" : "Please enter a valid email address.");
       emailField.focus();
       return false;
     }
 
     if (!puja) {
-      showFormMessage(form, "error", "Please select the puja you want to book.");
+      showFormMessage(form, "error", isHindi ? "कृपया पूजा का चयन करें।" : "Please select the puja you want to book.");
       pujaField.focus();
       return false;
     }
@@ -224,7 +365,7 @@
     if (submitButton) {
       submitButton.disabled = true;
       submitButton.dataset.originalText = submitButton.textContent || "Submit";
-      submitButton.textContent = "Submitting...";
+      submitButton.textContent = document.documentElement.lang === "hi" ? "भेजा जा रहा है..." : "Submitting...";
     }
 
     try {
@@ -242,8 +383,11 @@
         throw new Error(data.message || "We could not submit your form right now.");
       }
 
-      showFormMessage(form, "success", data.message);
-      showToast("success", data.message);
+      const successMessage = document.documentElement.lang === "hi"
+        ? "धन्यवाद। आपका अनुरोध सफलतापूर्वक भेज दिया गया है।"
+        : data.message;
+      showFormMessage(form, "success", successMessage);
+      showToast("success", successMessage);
       form.reset();
     } catch (error) {
       const message = error instanceof Error ? error.message : "Something went wrong while sending your request.";
@@ -322,9 +466,15 @@
   function init() {
     createTopCallBar();
     normalizeWhatsAppButtons();
+    createFloatingCallButton();
     replaceOmLogos();
+    addBrandNames();
     wireCallLinks();
     setupMenuToggle();
+    setupHomepageMotion();
+    setupHeaderState();
+    setupFaq();
+    setCurrentYear();
     enhanceForms();
     applyStatusFromUrl();
   }
