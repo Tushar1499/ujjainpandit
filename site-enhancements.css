@@ -2865,6 +2865,14 @@ body:not(.home-page) > .max-w-3xl {
     bottom: 82px !important;
   }
 
+  body:not(.home-page) .site-call-fab {
+    right: 14px !important;
+    bottom: 145px !important;
+    z-index: 91 !important;
+    width: 53px !important;
+    height: 53px !important;
+  }
+
   .home-page::after {
     position: fixed;
     right: 0;
