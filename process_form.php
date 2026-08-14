@@ -8,9 +8,8 @@ require_once __DIR__ . '/PHPMailer/src/Exception.php';
 require_once __DIR__ . '/PHPMailer/src/PHPMailer.php';
 require_once __DIR__ . '/PHPMailer/src/SMTP.php';
 
-$siteUrl = 'https://ujjainpanditmangalpuja.com';
 $ownerEmail = 'ramlakhansharma8319@gmail.com';
-$fromEmail = 'no-reply@ujjainpanditmangalpuja.com';
+$fromEmail = getenv('UJJAIN_SMTP_FROM_EMAIL') ?: 'pandit@ujjainpanditmangalpuja.com';
 $fromName = 'Ujjain Pandit Booking';
 $smtpHost = 'smtp.hostinger.com';
 $smtpPort = 587;
@@ -36,7 +35,8 @@ function is_ajax_request(): bool
 
 function clean_text(string $value): string
 {
-    return trim(strip_tags($value));
+    $value = preg_replace('/[\r\n]+/', ' ', strip_tags($value)) ?? '';
+    return trim($value);
 }
 
 function clean_mobile(string $value): string
@@ -94,8 +94,7 @@ function send_with_phpmailer(
     string $mobile,
     string $email,
     string $pujaName,
-    string $sourcePage,
-    string $siteUrl
+    string $sourcePage
 ): void {
     $mail = new PHPMailer(true);
     $mail->isSMTP();
@@ -105,6 +104,7 @@ function send_with_phpmailer(
     $mail->Password = $smtpPassword;
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = $smtpPort;
+    $mail->Timeout = 15;
     $mail->CharSet = 'UTF-8';
     $mail->setFrom($fromEmail, $fromName);
     $mail->addAddress($ownerEmail, 'Pandit Ram Lakhan Sharma');
@@ -121,28 +121,6 @@ function send_with_phpmailer(
         "Date: " . date('d M Y, h:i A') . "\n" .
         "IP Address: " . ($_SERVER['REMOTE_ADDR'] ?? 'Unknown') . "\n";
     $mail->send();
-
-    $customer = new PHPMailer(true);
-    $customer->isSMTP();
-    $customer->Host = $smtpHost;
-    $customer->SMTPAuth = true;
-    $customer->Username = $smtpUser;
-    $customer->Password = $smtpPassword;
-    $customer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $customer->Port = $smtpPort;
-    $customer->CharSet = 'UTF-8';
-    $customer->setFrom($fromEmail, 'Pandit Ram Lakhan Sharma');
-    $customer->addAddress($email, $name);
-    $customer->addReplyTo($ownerEmail, 'Pandit Ram Lakhan Sharma');
-    $customer->Subject = 'Puja Booking Confirmation';
-    $customer->isHTML(false);
-    $customer->Body =
-        "Namaste {$name},\n\n" .
-        "Your enquiry for {$pujaName} has been received successfully.\n" .
-        "Pandit Ji ki team aapse jaldi contact karegi.\n\n" .
-        "Contact: +91-6263635078\n" .
-        "Website: {$siteUrl}\n";
-    $customer->send();
 }
 
 function send_with_mail(
@@ -153,8 +131,7 @@ function send_with_mail(
     string $mobile,
     string $email,
     string $pujaName,
-    string $sourcePage,
-    string $siteUrl
+    string $sourcePage
 ): bool {
     $subject = 'New Puja Booking Request - ' . $pujaName;
     $body =
@@ -170,21 +147,7 @@ function send_with_mail(
     $headers .= "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
-    $ownerSent = mail($ownerEmail, $subject, $body, $headers);
-
-    $customerHeaders = "From: Pandit Ram Lakhan Sharma <{$fromEmail}>\r\n";
-    $customerHeaders .= "Reply-To: {$ownerEmail}\r\n";
-    $customerHeaders .= "MIME-Version: 1.0\r\n";
-    $customerHeaders .= "Content-Type: text/plain; charset=UTF-8\r\n";
-    $customerBody =
-        "Namaste {$name},\n\n" .
-        "Your enquiry for {$pujaName} has been received successfully.\n" .
-        "Pandit Ji ki team aapse jaldi contact karegi.\n\n" .
-        "Contact: +91-6263635078\n" .
-        "Website: {$siteUrl}\n";
-    @mail($email, 'Puja Booking Confirmation', $customerBody, $customerHeaders);
-
-    return $ownerSent;
+    return mail($ownerEmail, $subject, $body, $headers);
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -229,8 +192,7 @@ if ($smtpPassword !== '') {
             $mobile,
             $email,
             $pujaName,
-            $sourcePage,
-            $siteUrl
+            $sourcePage
         );
         respond(true, 'Thank you. Your enquiry has been sent successfully.');
     } catch (Exception $exception) {
@@ -246,8 +208,7 @@ $fallbackSent = send_with_mail(
     $mobile,
     $email,
     $pujaName,
-    $sourcePage,
-    $siteUrl
+    $sourcePage
 );
 
 if ($fallbackSent) {
