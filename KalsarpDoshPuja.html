@@ -193,22 +193,22 @@ class="text-gray-700 hover:text-red-600 font-bold text-xl transition">
                 >
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                            <input type="text" id="name" name="name" placeholder="Enter your name"
+                            <input type="text" id="name" name="name" autocomplete="name" placeholder="Enter your name" required
                                 class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300">
                         </div>
                         <div>
                             <label for="mobile" class="block text-sm font-medium text-gray-700">Mobile Number</label>
-                            <input type="text" id="mobile" name="mobile" placeholder="Enter your mobile number"
+                            <input type="tel" id="mobile" name="mobile" autocomplete="tel" inputmode="numeric" pattern="[0-9]{10}" placeholder="Enter your mobile number" required
                                 class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300">
                         </div>
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                            <input type="email" id="email" name="email" placeholder="Enter your email"
+                            <input type="email" id="email" name="email" autocomplete="email" placeholder="Enter your email" required
                                 class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300">
                         </div>
                         <div>
                             <label for="puja" class="block text-sm font-medium text-gray-700">Select Puja</label>
-                            <select id="puja" name="puja"
+                            <select id="puja" name="puja" required
                                 class="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300">
                                 <option value="" disabled selected>Select a Puja</option>
                                 <option value="kalsarp">Kalsarp Dosh Puja</option>
