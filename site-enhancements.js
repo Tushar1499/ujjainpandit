@@ -413,9 +413,6 @@
   async function submitLeadForm(form) {
     const submitButton = form.querySelector('button[type="submit"]');
     const formData = new FormData(form);
-    const fallbackMessage = document.documentElement.lang === "hi"
-      ? "अभी आपका अनुरोध नहीं भेजा जा सका। कृपया दोबारा प्रयास करें या +91-6263635078 पर कॉल करें।"
-      : "We could not submit your form right now. Please try again or call +91-6263635078.";
 
     formData.set("source_page", getSourcePage());
     form.classList.add("site-form-loading");
@@ -427,27 +424,18 @@
     }
 
     try {
-      let response;
-      let data;
+      const response = await fetch("process_form.php", {
+        method: "POST",
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        body: formData,
+      });
 
-      try {
-        response = await fetch("process_form.php", {
-          method: "POST",
-          headers: {
-            "Accept": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-          },
-          body: formData,
-        });
+      const data = await response.json();
 
-        const responseText = await response.text();
-        data = responseText.trim() ? JSON.parse(responseText) : null;
-      } catch (requestError) {
-        throw new Error(fallbackMessage);
-      }
-
-      if (!response.ok || !data || !data.success) {
-        throw new Error((data && data.message) || fallbackMessage);
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "We could not submit your form right now.");
       }
 
       const successMessage = document.documentElement.lang === "hi"
