@@ -111,15 +111,6 @@
     document.body.appendChild(callButton);
   }
 
-  function replaceOmLogos() {
-    document.querySelectorAll('img[alt="Om Symbol"]').forEach(function (img) {
-      img.src = "./image/om-logo.svg";
-      img.alt = "Om Symbol";
-      img.loading = "eager";
-      img.decoding = "async";
-    });
-  }
-
   function addBrandNames() {
     if (document.body.classList.contains("home-page")) {
       return;
@@ -249,61 +240,6 @@
           }
         });
       });
-    });
-  }
-
-  function setupCertificateLightbox() {
-    const dialog = document.getElementById("certificate-lightbox");
-    if (!dialog) {
-      return;
-    }
-
-    const dialogImage = dialog.querySelector("img");
-    const dialogTitle = document.getElementById("certificate-dialog-title");
-    const closeButton = dialog.querySelector(".certificate-lightbox-close");
-
-    const closeDialog = function () {
-      if (typeof dialog.close === "function") {
-        dialog.close();
-      } else {
-        dialog.removeAttribute("open");
-      }
-    };
-
-    document.querySelectorAll("[data-certificate-src]").forEach(function (button) {
-      button.addEventListener("click", function () {
-        const src = button.getAttribute("data-certificate-src");
-        const title = button.getAttribute("data-certificate-title") || "प्रमाणपत्र";
-        if (!src || !dialogImage || !dialogTitle) {
-          return;
-        }
-
-        dialogImage.src = src;
-        dialogImage.alt = title;
-        dialogTitle.textContent = title;
-
-        if (typeof dialog.showModal === "function") {
-          dialog.showModal();
-        } else {
-          dialog.setAttribute("open", "");
-        }
-      });
-    });
-
-    if (closeButton) {
-      closeButton.addEventListener("click", closeDialog);
-    }
-
-    dialog.addEventListener("click", function (event) {
-      if (event.target === dialog) {
-        closeDialog();
-      }
-    });
-
-    dialog.addEventListener("close", function () {
-      if (dialogImage) {
-        dialogImage.removeAttribute("src");
-      }
     });
   }
 
@@ -438,6 +374,14 @@
         throw new Error(data.message || "We could not submit your form right now.");
       }
 
+      if (typeof window.gtag === "function") {
+        window.gtag("event", "conversion", {
+          send_to: SITE.conversionId,
+          value: 1.0,
+          currency: "INR",
+        });
+      }
+
       const successMessage = document.documentElement.lang === "hi"
         ? "धन्यवाद। आपका अनुरोध सफलतापूर्वक भेज दिया गया है।"
         : data.message;
@@ -503,6 +447,18 @@
     });
   }
 
+  function prefillPujaFromUrl() {
+    const requestedPuja = new URLSearchParams(window.location.search).get("puja");
+    if (!requestedPuja) return;
+
+    document.querySelectorAll('select[name="puja"]').forEach(function (select) {
+      const hasRequestedOption = Array.from(select.options).some(function (option) {
+        return option.value === requestedPuja;
+      });
+      if (hasRequestedOption) select.value = requestedPuja;
+    });
+  }
+
   function applyStatusFromUrl() {
     const url = new URL(window.location.href);
     const status = url.searchParams.get("status");
@@ -522,15 +478,14 @@
     createTopCallBar();
     normalizeWhatsAppButtons();
     createFloatingCallButton();
-    replaceOmLogos();
     addBrandNames();
     wireCallLinks();
     setupMenuToggle();
     setupHomepageMotion();
     setupHeaderState();
     setupFaq();
-    setupCertificateLightbox();
     setCurrentYear();
+    prefillPujaFromUrl();
     enhanceForms();
     applyStatusFromUrl();
   }

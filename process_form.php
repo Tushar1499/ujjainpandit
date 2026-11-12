@@ -19,6 +19,7 @@ $smtpPassword = getenv('UJJAIN_SMTP_PASSWORD') ?: '';
 $pujaNames = [
     'kalsarp' => 'Kalsarp Dosh Puja',
     'mangal' => 'Mangal Dosh Puja',
+    'pitra' => 'Pitra Shanti Puja',
     'mahamrityunjay' => 'Mahamrityunjay Jaap',
     'navgraha' => 'Navgraha Puja',
     'rudrabhishek' => 'Rudrabhishek',
