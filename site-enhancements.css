@@ -426,13 +426,17 @@ a {
   text-shadow: 0 2px 12px rgba(20, 8, 5, 0.72);
 }
 
+.hero-copy h1.hero-announcement .hero-announcement-emphasis {
+  font-size: 1.16em;
+}
+
 .hero-copy h2.hero-primary-heading {
   max-width: 760px;
   margin: 10px 0 0;
   padding: 0;
   color: #fffdf9;
   font-family: var(--font-display);
-  font-size: clamp(27px, 3.4vw, 46px);
+  font-size: clamp(24px, 2.9vw, 39px);
   font-weight: 700;
   line-height: 1.35;
   letter-spacing: 0;
@@ -2534,6 +2538,65 @@ body:not(.home-page) section.bg-gray-800 p {
   color: rgba(255, 255, 255, 0.62) !important;
 }
 
+/* Consistent layout for the three long-form puja detail pages. */
+.puja-detail-page {
+  overflow-x: clip;
+}
+
+.puja-detail-page main {
+  width: min(100% - 36px, 980px);
+  margin-inline: auto;
+  padding-block: clamp(28px, 5vw, 58px) 8px;
+}
+
+.puja-detail-page main h1,
+.puja-detail-page > .container h1 {
+  color: var(--maroon) !important;
+  font-size: clamp(28px, 4vw, 43px);
+  line-height: 1.25;
+}
+
+.puja-detail-page > .container:has(> img),
+.puja-detail-page > .container:has(> div > img) {
+  margin-top: clamp(20px, 4vw, 42px) !important;
+}
+
+.puja-detail-page > .container:has(> img) > img,
+.puja-detail-page > .container:has(> div > img) > div > img {
+  width: 100%;
+  max-height: 560px;
+  object-fit: cover;
+}
+
+.puja-detail-page .container > .bg-gray-100 {
+  border: 1px solid var(--border);
+  background: var(--white) !important;
+}
+
+.puja-detail-page .container > .bg-gray-100 > .grid {
+  align-items: start;
+  gap: clamp(24px, 4vw, 48px);
+}
+
+.puja-detail-page form {
+  min-width: 0;
+  padding: clamp(18px, 3vw, 30px) !important;
+}
+
+.puja-detail-page form button[type="submit"] {
+  min-height: 48px;
+}
+
+.puja-detail-page pre,
+.puja-detail-page code {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.puja-detail-page section {
+  scroll-margin-top: 90px;
+}
+
 .privacy-back {
   padding: 10px 18px;
   border: 1px solid var(--border);
@@ -2797,6 +2860,46 @@ body:not(.home-page) > .max-w-3xl {
 }
 
 @media (max-width: 620px) {
+  .puja-detail-page main {
+    width: calc(100% - 28px);
+    padding-top: 27px;
+  }
+
+  .puja-detail-page main h1,
+  .puja-detail-page > .container h1 {
+    font-size: clamp(25px, 7vw, 32px);
+  }
+
+  .puja-detail-page > .container:has(> img),
+  .puja-detail-page > .container:has(> div > img) {
+    margin-top: 18px !important;
+  }
+
+  .puja-detail-page > .container:has(> img) > img,
+  .puja-detail-page > .container:has(> div > img) > div > img {
+    max-height: 340px;
+  }
+
+  .puja-detail-page .container > .bg-gray-100 {
+    padding: 20px 16px !important;
+  }
+
+  .puja-detail-page .container > .bg-gray-100 > .grid {
+    gap: 24px;
+  }
+
+  .puja-detail-page form {
+    padding: 18px 15px !important;
+  }
+
+  .puja-detail-page section {
+    padding-block: 38px !important;
+  }
+
+  .puja-detail-page section h2 {
+    font-size: clamp(23px, 6vw, 30px);
+  }
+
   .featured-puja-grid {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -2874,7 +2977,7 @@ body:not(.home-page) > .max-w-3xl {
     max-width: 100%;
     margin-top: 8px;
     padding: 0;
-    font-size: clamp(24px, 7vw, 31px);
+    font-size: clamp(21px, 6vw, 27px);
     line-height: 1.45;
     text-align: center;
   }
@@ -3175,6 +3278,61 @@ body:not(.home-page) > .max-w-3xl {
   }
 
   .home-page .site-whatsapp-fab {
+    right: 13px !important;
+    bottom: 10px !important;
+    z-index: 91 !important;
+    width: 55px !important;
+    height: 48px !important;
+    border: 0 !important;
+    border-radius: 13px !important;
+  }
+
+  body.site-has-mobile-callbar:not(.home-page) {
+    padding-top: 0;
+    padding-bottom: 78px;
+  }
+
+  body.site-has-mobile-callbar:not(.home-page) .site-top-callbar {
+    display: none;
+  }
+
+  body.site-has-mobile-callbar:not(.home-page) > nav {
+    top: 0;
+  }
+
+  body.site-has-mobile-callbar:not(.home-page)::after {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 85;
+    height: 68px;
+    content: "";
+    border-top: 1px solid var(--border);
+    background: rgba(255, 253, 249, 0.97);
+    box-shadow: 0 -8px 25px rgba(50, 28, 18, 0.1);
+    backdrop-filter: blur(15px);
+  }
+
+  body.site-has-mobile-callbar:not(.home-page) .site-call-fab {
+    right: auto !important;
+    bottom: 10px !important;
+    left: 13px !important;
+    z-index: 91 !important;
+    width: calc(100% - 82px) !important;
+    height: 48px !important;
+    flex-direction: row;
+    gap: 8px;
+    border: 0;
+    border-radius: 13px !important;
+    background: linear-gradient(135deg, var(--saffron), var(--saffron-dark)) !important;
+  }
+
+  body.site-has-mobile-callbar:not(.home-page) .site-call-fab .site-fab-label {
+    font-size: 14px;
+  }
+
+  body.site-has-mobile-callbar:not(.home-page) .site-whatsapp-fab {
     right: 13px !important;
     bottom: 10px !important;
     z-index: 91 !important;
